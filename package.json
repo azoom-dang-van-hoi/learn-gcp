@@ -1,0 +1,21 @@
+{
+  "name": "learn-gcp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:azoom-dang-van-hoi/learn-gcp.git",
+  "author": "azoom-dang-van-hoi <dang.van.hoi@azoom.jp>",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index",
+    "staging:clean": "git fetch origin --prune 'refs/tags/*:refs/tags/*' && git push origin --delete $(git tag -l 'staging-*') || true && git fetch origin --prune 'refs/tags/*:refs/tags/*'",
+    "staging:deploy": "yarn staging:clean && TAG=`echo staging-$(date +%Y%m%d-%H%M%S)` && git tag $TAG && git push origin $TAG"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
