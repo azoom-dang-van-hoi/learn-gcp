@@ -1,0 +1,48 @@
+steps:
+  # run from the start
+  # this will decrypt the encrypted file and secret
+  - id: 'prepare-secret'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud secrets versions access latest --project=${_PROJECT_ID} --secret=${_ENV}-${_SECRET_NAME} --format='get(payload.data)' | tr '_-' '/+' | base64 -d > ${_DECRYPTED_ENV_FILE_LOCATION}
+  # this builds app docker image
+  # - id: 'build-app-image'
+  #   name: 'gcr.io/cloud-builders/docker'
+  #   waitFor: ['prepare-secret']
+  #   args: [ 'build', '-t', 'gcr.io/${_PROJECT_ID}/${_CLOUD_RUN_SERVICE_NAME}:latest', '-f', './cicd/staging/Dockerfile', '.' ]
+  # Publish the image to Container Registry.
+  # images: ['gcr.io/${_PROJECT_ID}/${_CLOUD_RUN_SERVICE_NAME}:latest']
+  # this builds app docker image
+  - id: 'build-app-image'
+    name: 'gcr.io/kaniko-project/executor:latest'
+    waitFor: ['prepare-secret']
+    args:
+      - --dockerfile=${_APP_DOCKER_FILE}
+      - --destination=gcr.io/${_PROJECT_ID}/${_CLOUD_RUN_SERVICE_NAME}:latest
+      - --cache=true
+      - --cache-ttl=336h
+
+  # deploy container image to Cloud Run
+  - id: 'deploy-app'
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: ['build-app-image']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy ${_CLOUD_RUN_SERVICE_NAME} \
+          --platform managed \
+          --image gcr.io/${_PROJECT_ID}/${_CLOUD_RUN_SERVICE_NAME}:latest \
+          --allow-unauthenticated \
+          --region us-central1 \
+substitutions:
+  _ENV: staging
+  _SECRET_NAME: learnGCP
+  _PROJECT_ID: azoom-n-d-phong
+  _DECRYPTED_ENV_FILE_LOCATION: ./.env
+  _APP_DOCKER_FILE: ./cicd/staging/Dockerfile
+  _CLOUD_RUN_SERVICE_NAME: staging-demo-hoi
+timeout: 900s
