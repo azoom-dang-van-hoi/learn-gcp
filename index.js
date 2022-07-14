@@ -1,31 +1,42 @@
 import express from "express"
+import promiseRouter from "express-promise-router"
+import nnnRouter from "nnn-router"
 import cors from "cors"
-import cookieParser from "cookie-parser"
+import statuses from "statuses"
+import cookie from 'cookie-parser'
+
+// Customize express response
+express.response.sendStatus = function (statusCode) {
+  const body = { message: statuses(statusCode) || String(statusCode) }
+  this.statusCode = statusCode
+  this.type("json")
+  this.send(body)
+}
 
 const app = express()
-const port = 80
 
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use(cors())
-app.use(cookieParser())
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+  /* Add express.json and express.urlencoded to parse bodies
+    https://github.com/expressjs/express/releases/tag/4.16.0 */
+  express.urlencoded({ extended: true }),
+  express.json(),
+  express.text(),
+  cookie()
+)
 
-app.get("/", (req, res) => {
-  console.log(req.headers, req.cookies)
-  res.cookie('test', 'demo', {
-    domain: '.hoi-demo-pomerium-trkregf5uq-an.a.run.app'
-  })
-  res.sendStatus(200)
-})
+app.use(
+  nnnRouter({ routeDir: "/routes", baseRouter: promiseRouter() }),
+  (error, req, res, next) => {
+    console.error(error)
+    return res.sendStatus(500)
+  }
+)
 
-app.get("/api", (req, res) => {
-  console.log(req.headers, req.cookies)
-  res.cookie('test', 'demo', {
-    domain: '.hoi-demo-pomerium-trkregf5uq-an.a.run.app'
-  })
-  res.sendStatus(200)
-})
-
+const port = process.env.PORT || 80
 app.listen(port, () => {
-  console.log("App is running")
+  console.log(`Listening on port ${port}`)
 })
