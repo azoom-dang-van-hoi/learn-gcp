@@ -4,6 +4,8 @@ import nnnRouter from "nnn-router"
 import cors from "cors"
 import statuses from "statuses"
 import cookie from 'cookie-parser'
+import getPermissions from './middleware/getPermissions.js'
+import validatePermissions from './middleware/validatePermission.js'
 
 // Customize express response
 express.response.sendStatus = function (statusCode) {
@@ -27,6 +29,8 @@ app.use(
   express.text(),
   cookie()
 )
+
+app.use(/^\/(?!(api\/callback)).*/, getPermissions, validatePermissions)
 
 app.use(
   nnnRouter({ routeDir: "/routes", baseRouter: promiseRouter() }),

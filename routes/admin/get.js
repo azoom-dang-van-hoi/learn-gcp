@@ -1,3 +1,3 @@
 export default (req, res) => {
-  return res.send({})
+  return res.sendStatus(200)
 }
