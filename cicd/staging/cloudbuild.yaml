@@ -7,7 +7,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud secrets versions access latest --project=${_PROJECT_ID} --secret=${_ENV}-${_SECRET_NAME} --format='get(payload.data)' | tr '_-' '/+' | base64 -d > ${_DECRYPTED_ENV_FILE_LOCATION}
+        gcloud secrets versions access latest --project=${_PROJECT_ID} --secret=${_SECRET_NAME} --format='get(payload.data)' | tr '_-' '/+' | base64 -d > ${_DECRYPTED_ENV_FILE_LOCATION}
   # this builds app docker image
   # - id: 'build-app-image'
   #   name: 'gcr.io/cloud-builders/docker'
@@ -40,7 +40,7 @@ steps:
           --region us-central1 \
 substitutions:
   _ENV: staging
-  _SECRET_NAME: learnGCP
+  _SECRET_NAME: hoi-demo-api
   _PROJECT_ID: azoom-n-d-phong
   _DECRYPTED_ENV_FILE_LOCATION: ./.env
   _APP_DOCKER_FILE: ./cicd/staging/Dockerfile

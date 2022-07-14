@@ -4,6 +4,10 @@ import nnnRouter from "nnn-router"
 import cors from "cors"
 import statuses from "statuses"
 import cookie from 'cookie-parser'
+import fakeDataDevelopment from "./middleware/fake-data-development.js"
+import getPermissions from './middleware/getPermissions.js'
+import validatePermissions from './middleware/validatePermission.js'
+import getUserInfo from './middleware/getUserInfo.js'
 
 // Customize express response
 express.response.sendStatus = function (statusCode) {
@@ -27,6 +31,12 @@ app.use(
   express.text(),
   cookie()
 )
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(fakeDataDevelopment)
+} else {
+  app.use(getPermissions, validatePermissions, getUserInfo)
+}
 
 app.use(
   nnnRouter({ routeDir: "/routes", baseRouter: promiseRouter() }),

@@ -1,0 +1,32 @@
+{
+    "id": 1,
+    "googleId": "1140355546817262626503",
+    "employeeNumber": null,
+    "extensionNumber": null,
+    "isEnabled": 1,
+    "email": "test@azoom.jp",
+    "departmentId": 1,
+    "departmentName": "ソリューション部",
+    "belongingToBranchOffice": 4,
+    "officeLocationName": "大阪",
+    "genderType": null,
+    "birthDate": null,
+    "joiningDate": null,
+    "tel": "000-0000-0000",
+    "usernameFurigana": "DANG VAN HOI",
+    "name": "Dang Van Hoi",
+    "username": "DANG VAN HOI",
+    "familyName": "DANG VAN",
+    "givenName": "HOI",
+    "positionId": null,
+    "position": "一般メンバー",
+    "branchId": null,
+    "permissions": [
+        5,
+        10,
+        13
+    ],
+    "photoUrl": null,
+    "organizationId": 1,
+    "role": "admin"
+}

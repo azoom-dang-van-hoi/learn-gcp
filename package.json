@@ -6,17 +6,20 @@
   "author": "azoom-dang-van-hoi <dang.van.hoi@azoom.jp>",
   "type": "module",
   "scripts": {
-    "dev": "nodemon index",
-    "start": "node index",
+    "dev": "env $(grep -v '^#' .env) nodemon index",
+    "start": "env $(grep -v '^#' .env) node index",
     "staging:clean": "git fetch origin --prune 'refs/tags/*:refs/tags/*' && git push origin --delete $(git tag -l 'staging-*') || true && git fetch origin --prune 'refs/tags/*:refs/tags/*'",
     "staging:deploy": "yarn staging:clean && TAG=`echo staging-$(date +%Y%m%d-%H%M%S)` && git tag $TAG && git push origin $TAG"
   },
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.27.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "express-promise-router": "^4.1.1",
+    "got": "^12.1.0",
+    "jsonwebtoken": "^8.5.1",
     "nnn-router": "^1.1.6",
     "statuses": "^2.0.1"
   },
